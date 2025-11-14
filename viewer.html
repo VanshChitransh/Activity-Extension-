@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recording Session Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="viewer-container">
+        <div class="viewer-header">
+            <h1>📋 Session Events</h1>
+            <p class="text-muted">Review all captured events</p>
+            
+            <div class="viewer-controls">
+                <button id="exportBtn">📄 Generate PDF</button>
+                <button id="exportJsonBtn">💾 Export JSON</button>
+                <button id="clearBtn">🗑 Clear Session</button>
+            </div>
+            <div class="event-count">
+                <span id="eventCount">0</span> events
+            </div>
+        </div>
+
+        <div class="event-list" id="chat-feed">
+            <!-- Events will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Image Modal for full-size viewing -->
+    <div id="imageModal" class="lightbox">
+        <img id="modalImage" src="" alt="Screenshot">
+    </div>
+
+    <script src="viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px 10px 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 6px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Extension Test Page</h1>
+    <p class="subtitle">Use this page to test the Screen Recorder extension</p>
+
+    <div class="instructions">
+        <strong>📝 Instructions:</strong><br>
+        1. Open the extension popup and click "Start Recording"<br>
+        2. Interact with elements below<br>
+        3. Click "View Events" to see captured interactions<br>
+        4. Check if screenshots are present
+    </div>
+
+    <div class="test-section">
+        <h2>🖱️ Click Test</h2>
+        <p>Click these buttons to test click capture with screenshots:</p>
+        <button class="btn-primary" onclick="showResult('primary')">Primary Button</button>
+        <button class="btn-success" onclick="showResult('success')">Success Button</button>
+        <button class="btn-danger" onclick="showResult('danger')">Danger Button</button>
+        <div id="clickResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>⌨️ Keyboard Test</h2>
+        <p>Press Enter, Escape, Tab, or Space in these fields:</p>
+        <label>Text Input (Press Enter):</label>
+        <input type="text" id="textInput" placeholder="Type something and press Enter">
+        
+        <label>Text Area (Press Tab):</label>
+        <textarea id="textArea" placeholder="Type and press Tab to blur"></textarea>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Input Commit Test</h2>
+        <p>Type in these fields and click outside (blur) or press Enter:</p>
+        <label>Normal Input:</label>
+        <input type="text" id="normalInput" placeholder="Type and click outside">
+        
+        <label>Password Input (should be skipped):</label>
+        <input type="password" id="passwordInput" placeholder="Password should not be recorded">
+        
+        <div id="inputResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Navigation Test</h2>
+        <p>Click to test navigation tracking:</p>
+        <button class="btn-primary" onclick="simulateNavigation()">Simulate Navigation (hash change)</button>
+        <button class="btn-success" onclick="window.history.pushState({}, '', '#section2')">Push State</button>
+        <button class="btn-danger" onclick="window.history.back()">Go Back</button>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ Expected Results</h2>
+        <ul>
+            <li>✅ All button clicks should be captured with coordinates</li>
+            <li>✅ Enter/Space/Escape/Tab keypresses should be captured</li>
+            <li>✅ Input commits (blur, Enter) should capture typed text</li>
+            <li>✅ Password fields should NOT show typed text</li>
+            <li>✅ Navigation changes should be tracked</li>
+            <li>✅ <strong>Screenshots should be present for all events</strong></li>
+        </ul>
+    </div>
+
+    <script>
+        function showResult(type) {
+            const result = document.getElementById('clickResult');
+            result.textContent = `✅ ${type} button clicked at ${new Date().toLocaleTimeString()}`;
+            result.className = 'result show';
+            setTimeout(() => {
+                result.classList.remove('show');
+            }, 3000);
+        }
+
+        function simulateNavigation() {
+            window.location.hash = '#test-' + Date.now();
+        }
+
+        // Add event listeners for input feedback
+        document.getElementById('textInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                alert('Enter pressed! This should be captured.');
+            }
+        });
+
+        document.getElementById('normalInput').addEventListener('blur', () => {
+            if (document.getElementById('normalInput').value) {
+                const result = document.getElementById('inputResult');
+                result.textContent = '✅ Input committed (blur)';
+                result.className = 'result show';
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('blur', () => {
+            if (document.getElementById('passwordInput').value) {
+                alert('⚠️ Password input - text should NOT be recorded!');
+            }
+        });
+
+        // Add some visual feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
